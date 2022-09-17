@@ -6,31 +6,30 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name = "message")
+@Table(name = "friendship")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Message {
+public class Friendship {
     @Id
     private UUID uuid = UUID.randomUUID();
 
-    @Column(name = "sent_date", nullable = false)
-    private Date sentDate;
-
-    @Column(nullable = false)
-    @Lob
-    private String text;
+    @ManyToOne
+    @JoinColumn(name = "main_person", nullable = false)
+    private Person mainPerson;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
-    private Chat chat;
-
-    @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "person", nullable = false)
     private Person person;
+
+    @ManyToOne
+    @JoinColumn(
+            nullable = false,
+            referencedColumnName = "id"
+    )
+    private FriendshipStatus status;
 }

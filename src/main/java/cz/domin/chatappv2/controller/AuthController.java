@@ -7,4 +7,5 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 @AllArgsConstructor
 public class AuthController {
+
 }

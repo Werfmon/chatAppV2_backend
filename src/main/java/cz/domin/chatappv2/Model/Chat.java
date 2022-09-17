@@ -17,12 +17,12 @@ import java.util.UUID;
 public class Chat {
     @Id
     private UUID uuid = UUID.randomUUID();
+
+    @Column(length = 7, nullable = false)
+    private String color = "#DE7D0B";
+
     @ManyToOne
-    @JoinColumn(name = "person_1")
-    private Person person1;
-    @ManyToOne
-    @JoinColumn(name = "person_2")
-    private Person person2;
-    @Column(name = "chat_color", length = 7)
-    private String chatColor = "#DE7D0B";
+    @JoinColumn(nullable = false)
+    private Friendship friendship;
+
 }

@@ -6,9 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -20,23 +18,35 @@ import java.util.UUID;
 public class Person {
     @Id
     private UUID uuid = UUID.randomUUID();
-    @Column(name = "last_name", length = 50)
-    private String lastName;
-    @Column(name = "first_name", length = 50)
+
+    @Column(name = "first_name", length = 50, nullable = false)
     private String firstName;
-    @Column(length = 40)
-    private String nickname;
-    @Column(unique = true)
+
+    @Column(name = "last_name", length = 50, nullable = false)
+    private String lastName;
+
+    @Column(unique = true, nullable = false)
     private String email;
-    @Column
+
+    @Column(length = 40, nullable = false)
+    private String nickname;
+
+    @Column(nullable = false)
     private String password;
-    @Column(name = "registration_date")
+
+    @Column(name = "registration_date", nullable = false)
     private Date registrationDate;
+
     @Column(name = "last_login")
     private Date lastLogin;
-    @OneToOne
-    @JoinColumn(referencedColumnName = "uuid", name = "person_settings_uuid")
-    private PersonSettings personSettings;
-    @OneToMany(mappedBy = "person1")
-    private List<Chat> chats = new ArrayList<>();
+
+    @Column(name = "image_path", nullable = false)
+    private String imagePath;
+
+    @ManyToOne
+    @JoinColumn(
+            nullable = false,
+            referencedColumnName = "id"
+    )
+    private VisibilityStatus visibility;
 }
