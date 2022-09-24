@@ -1,5 +1,7 @@
 package cz.domin.chatappv2.Service;
 
+import com.sun.xml.bind.v2.TODO;
+import cz.domin.chatappv2.Helper.Response.ServiceResponse;
 import cz.domin.chatappv2.Model.Friendship;
 import cz.domin.chatappv2.Model.FriendshipStatus;
 import cz.domin.chatappv2.Model.Person;
@@ -15,20 +17,31 @@ public class FriendshipService {
     private final FriendshipStatusService friendshipStatusService;
     private final FriendshipRepository friendshipRepository;
 
-    public Friendship createFriendship(String mainUuid, String uuid) {
+    public ServiceResponse<Friendship> createFriendship(String mainUuid, String uuid) {
         Friendship friendship = new Friendship();
 
         Person mainPerson = personService.getPersonByUuid(mainUuid);
         Person person = personService.getPersonByUuid(uuid);
 
         if (mainPerson == null || person == null) {
-            return null;
+            return new ServiceResponse<>(null, "Cannot find people", ServiceResponse.ERROR);
+        }
+
+        Boolean friendshipExists =
+                friendshipRepository.existsFriendshipByMainPersonAndPerson(mainPerson, person);
+        Boolean reverseFriendshipExists =
+                friendshipRepository.existsFriendshipByMainPersonAndPerson(person, mainPerson);
+
+        if (friendshipExists || reverseFriendshipExists) {
+            return new ServiceResponse<>(null, "Friendship with these people exists", ServiceResponse.ERROR);
         }
 
         friendship.setMainPerson(mainPerson);
         friendship.setPerson(person);
         friendship.setStatus(friendshipStatusService.getById(FriendshipStatus.WAITING));
 
-        return friendshipRepository.save(friendship);
+        Friendship savedFriendship = friendshipRepository.save(friendship);
+
+        return new ServiceResponse<>(savedFriendship, "Friendship created", ServiceResponse.OK);
     }
 }

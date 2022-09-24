@@ -1,6 +1,7 @@
 package cz.domin.chatappv2.Controller;
 
 import cz.domin.chatappv2.Helper.Response.Response;
+import cz.domin.chatappv2.Helper.Response.ServiceResponse;
 import cz.domin.chatappv2.Model.Person;
 import cz.domin.chatappv2.Controller.dto.create.NewPersonDTO;
 import cz.domin.chatappv2.Service.PersonService;
@@ -19,21 +20,13 @@ public class PersonController {
 
     @PostMapping("/registration")
     public Response create(@RequestBody NewPersonDTO newPersonDTO) {
-        Person person = personService.create(newPersonDTO);
+        ServiceResponse<Person> serviceResponse = personService.create(newPersonDTO);
         Response<Person> response;
 
-        if (person != null) {
-            response = new Response(
-                    person,
-                    HttpStatus.OK,
-                    "User was registered"
-            );
+        if (serviceResponse.getStatus() == ServiceResponse.OK) {
+            response = new Response(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage());
         } else {
-            response = new Response(
-                    null,
-                    HttpStatus.BAD_REQUEST,
-                    "User with this email exists, try different"
-            );
+            response = new Response(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage());
         }
 
         return response;

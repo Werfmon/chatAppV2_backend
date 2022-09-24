@@ -1,6 +1,7 @@
 package cz.domin.chatappv2.Controller;
 
 import cz.domin.chatappv2.Helper.Response.Response;
+import cz.domin.chatappv2.Helper.Response.ServiceResponse;
 import cz.domin.chatappv2.Model.Friendship;
 import cz.domin.chatappv2.Model.Person;
 import cz.domin.chatappv2.Service.FriendshipService;
@@ -27,14 +28,14 @@ public class FriendshipController {
             return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error with authentication");
         }
 
-        Friendship friendship = friendshipService.createFriendship(mainPerson.getUuid(), uuid);
+        ServiceResponse<Friendship> serviceResponse = friendshipService.createFriendship(mainPerson.getUuid(), uuid);
 
         Response response;
 
-        if(friendship != null) {
-            response = new Response(friendship, HttpStatus.OK, "Waiting to accept");
+        if(serviceResponse.getStatus() == ServiceResponse.OK) {
+            response = new Response(serviceResponse.getData(), HttpStatus.OK, "Waiting to accept");
         } else {
-            response = new Response(null, HttpStatus.BAD_REQUEST, "Error, cannot set friendship");
+            response = new Response(null, HttpStatus.BAD_REQUEST, serviceResponse.getMessage());
         }
         return response;
     }

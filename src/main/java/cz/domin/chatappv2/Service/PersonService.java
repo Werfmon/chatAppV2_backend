@@ -3,6 +3,7 @@ package cz.domin.chatappv2.Service;
 import cz.domin.chatappv2.Controller.dto.create.NewPersonDTO;
 import cz.domin.chatappv2.Helper.Convertor.Base64ImageConvertor;
 import cz.domin.chatappv2.Helper.Convertor.Base64ImageConvertorResponse;
+import cz.domin.chatappv2.Helper.Response.ServiceResponse;
 import cz.domin.chatappv2.Model.Person;
 import cz.domin.chatappv2.Model.VisibilityStatus;
 import cz.domin.chatappv2.Repository.PersonRepository;
@@ -39,11 +40,11 @@ public class PersonService {
                 .findPersonByEmail(email)
                 .orElse(null);
     }
-    public Person create(NewPersonDTO newPersonDTO) {
+    public ServiceResponse<Person> create(NewPersonDTO newPersonDTO) {
         Person person = modelMapper.map(newPersonDTO, Person.class);
 
         if (this.isUserExistsWithEmail(person.getEmail())) {
-            return null;
+            return new ServiceResponse<>(null, "User exists with this email", ServiceResponse.ERROR);
         }
 
         person.setRegistrationDate(LocalDateTime.now());
@@ -60,7 +61,9 @@ public class PersonService {
         person.setPassword(bCryptPasswordEncoder.encode(newPersonDTO.getPassword()));
         person.setVisibility(visibilityStatusService.getById(VisibilityStatus.VISIBLE));
 
-        return personRepository.save(person);
+        Person savedPerson = personRepository.save(person);
+
+        return new ServiceResponse<>(savedPerson, "Person was registered", ServiceResponse.OK);
     }
     public Boolean isUserExistsWithEmail(String email) {
         return this.getPersonByEmail(email) != null;
