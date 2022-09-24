@@ -16,6 +16,10 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class FriendshipStatus {
+    public static final Integer ACCEPTED = 1;
+    public static final Integer WAITING = 2;
+    public static final Integer REJECTED = 3;
+
     @Id
     @GeneratedValue(
             strategy = GenerationType.IDENTITY

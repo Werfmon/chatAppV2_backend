@@ -16,7 +16,8 @@ import java.util.UUID;
 @Setter
 public class Friendship {
     @Id
-    private UUID uuid = UUID.randomUUID();
+    @Column(columnDefinition = "char(36)")
+    private String uuid = UUID.randomUUID().toString();
 
     @ManyToOne
     @JoinColumn(name = "main_person", nullable = false)

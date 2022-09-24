@@ -8,4 +8,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/chat")
 @AllArgsConstructor
 public class ChatController {
+
 }

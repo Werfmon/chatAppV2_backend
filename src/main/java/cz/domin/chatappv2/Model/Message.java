@@ -17,7 +17,8 @@ import java.util.UUID;
 @Setter
 public class Message {
     @Id
-    private UUID uuid = UUID.randomUUID();
+    @Column(columnDefinition = "char(36)")
+    private String uuid = UUID.randomUUID().toString();
 
     @Column(name = "sent_date", nullable = false)
     private Date sentDate;

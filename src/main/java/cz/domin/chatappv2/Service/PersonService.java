@@ -31,10 +31,13 @@ public class PersonService {
     private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    public Person getPersonByUuid(String uuid) {
+        return personRepository.findById(uuid).orElse(null);
+    }
     public Person getPersonByEmail(String email) {
         return personRepository
                 .findPersonByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Person with email not found"));
+                .orElse(null);
     }
     public Person create(NewPersonDTO newPersonDTO) {
         Person person = modelMapper.map(newPersonDTO, Person.class);
@@ -60,11 +63,6 @@ public class PersonService {
         return personRepository.save(person);
     }
     public Boolean isUserExistsWithEmail(String email) {
-        try {
-            Person person = this.getPersonByEmail(email);
-            return person != null;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
+        return this.getPersonByEmail(email) != null;
     }
 }

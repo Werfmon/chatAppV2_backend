@@ -16,7 +16,8 @@ import java.util.UUID;
 @Setter
 public class Chat {
     @Id
-    private UUID uuid = UUID.randomUUID();
+    @Column(columnDefinition = "char(36)")
+    private String uuid = UUID.randomUUID().toString();
 
     @Column(length = 7, nullable = false)
     private String color = "#DE7D0B";

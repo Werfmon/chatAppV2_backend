@@ -1,7 +1,6 @@
 package cz.domin.chatappv2.Model.InitializationData;
 
 import cz.domin.chatappv2.Model.FriendshipStatus;
-import cz.domin.chatappv2.Model.VisibilityStatus;
 import cz.domin.chatappv2.Repository.FriendshipStatusRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
