@@ -14,11 +14,15 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class VisibilityStatus {
+    public static final Integer VISIBLE = 1;
+    public static final Integer VISIBLE_BY_FRIENDS = 2;
+    public static final Integer INVISIBLE = 3;
+
     @Id
     @GeneratedValue(
             strategy = GenerationType.IDENTITY
     )
-    private Long id;
+    private Integer id;
 
     @Column(nullable = false)
     private String name;

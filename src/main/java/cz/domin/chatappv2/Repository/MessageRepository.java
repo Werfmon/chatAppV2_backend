@@ -1,4 +1,4 @@
-package cz.domin.chatappv2.repository;
+package cz.domin.chatappv2.Repository;
 
 
 import cz.domin.chatappv2.Model.Message;

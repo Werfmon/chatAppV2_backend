@@ -1,4 +1,4 @@
-package cz.domin.chatappv2.service;
+package cz.domin.chatappv2.Service;
 
 import cz.domin.chatappv2.Model.Person;
 import lombok.AllArgsConstructor;

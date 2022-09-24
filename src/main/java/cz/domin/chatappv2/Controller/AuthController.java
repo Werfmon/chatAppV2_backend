@@ -1,4 +1,4 @@
-package cz.domin.chatappv2.controller;
+package cz.domin.chatappv2.Controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
