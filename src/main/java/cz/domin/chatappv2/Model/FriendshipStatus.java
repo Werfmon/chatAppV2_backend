@@ -20,7 +20,7 @@ public class FriendshipStatus {
     @GeneratedValue(
             strategy = GenerationType.IDENTITY
     )
-    private Byte id;
+    private Integer id;
 
     @Column(nullable = false)
     private String name;
