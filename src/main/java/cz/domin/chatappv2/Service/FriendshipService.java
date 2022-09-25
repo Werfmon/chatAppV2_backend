@@ -44,4 +44,37 @@ public class FriendshipService {
 
         return new ServiceResponse<>(savedFriendship, "Friendship created", ServiceResponse.OK);
     }
+    public ServiceResponse<Friendship> acceptFriendship(String personUuid, String mainPersonUuid) {
+        Person person = personService.getPersonByUuid(personUuid);
+        Person mainPerson = personService.getPersonByUuid(mainPersonUuid);
+
+        Friendship friendship = friendshipRepository.findFriendshipByMainPersonAndPerson(mainPerson, person).orElse(null);
+
+        if (friendship == null) {
+            return new ServiceResponse<>(null, "Friendship not found", ServiceResponse.ERROR);
+        }
+
+        friendship.setStatus(friendshipStatusService.getById(FriendshipStatus.ACCEPTED));
+
+        Friendship savedFriendship = friendshipRepository.save(friendship);
+
+        return new ServiceResponse<>(savedFriendship, "Friendship accepted", ServiceResponse.OK);
+    }
+    public ServiceResponse<Friendship> rejectFriendship(String personUuid, String mainPersonUuid) {
+        Person person = personService.getPersonByUuid(personUuid);
+        Person mainPerson = personService.getPersonByUuid(mainPersonUuid);
+
+        Friendship friendship = friendshipRepository.findFriendshipByMainPersonAndPerson(mainPerson, person).orElse(null);
+
+        if (friendship == null) {
+            return new ServiceResponse<>(null, "Friendship not found", ServiceResponse.ERROR);
+        }
+
+        friendship.setStatus(friendshipStatusService.getById(FriendshipStatus.REJECTED));
+
+        Friendship savedFriendship = friendshipRepository.save(friendship);
+
+        return new ServiceResponse<>(savedFriendship, "Friendship rejected", ServiceResponse.OK);
+    }
+
 }

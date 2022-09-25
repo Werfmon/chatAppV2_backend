@@ -20,7 +20,7 @@ public class FriendshipController {
     private final PersonService personService;
 
     @PostMapping("/{uuid}/add")
-    public Response createFriendship(Authentication authentication, @PathVariable String uuid) {
+    public Response<Friendship> createFriendship(Authentication authentication, @PathVariable String uuid) {
         String email = authentication.getPrincipal().toString();
         Person mainPerson = personService.getPersonByEmail(email);
 
@@ -38,5 +38,39 @@ public class FriendshipController {
             response = new Response(null, HttpStatus.BAD_REQUEST, serviceResponse.getMessage());
         }
         return response;
+    }
+    @PutMapping("/{main_uuid}/accept")
+    public Response<Friendship> acceptFriendship(Authentication authentication, @PathVariable(name = "main_uuid") String mainPersonUuid) {
+        String email = authentication.getPrincipal().toString();
+        Person person = personService.getPersonByEmail(email);
+
+        if (person == null) {
+            return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error with authentication");
+        }
+
+        ServiceResponse<Friendship> serviceResponse = friendshipService.acceptFriendship(person.getUuid(), mainPersonUuid);
+
+        if (serviceResponse.getStatus() == ServiceResponse.ERROR) {
+            return new Response<>(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage());
+        }
+
+        return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage());
+    }
+    @PutMapping("/{main_uuid}/reject")
+    public Response<Friendship> rejectFriendship(Authentication authentication, @PathVariable(name = "main_uuid") String mainPersonUuid) {
+        String email = authentication.getPrincipal().toString();
+        Person person = personService.getPersonByEmail(email);
+
+        if (person == null) {
+            return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error with authentication");
+        }
+
+        ServiceResponse<Friendship> serviceResponse = friendshipService.rejectFriendship(person.getUuid(), mainPersonUuid);
+
+        if (serviceResponse.getStatus() == ServiceResponse.ERROR) {
+            return new Response<>(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage());
+        }
+
+        return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage());
     }
 }
