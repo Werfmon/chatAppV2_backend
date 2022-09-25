@@ -3,7 +3,9 @@ package cz.domin.chatappv2.Service;
 import cz.domin.chatappv2.Controller.dto.create.NewPersonDTO;
 import cz.domin.chatappv2.Helper.Convertor.Base64ImageConvertor;
 import cz.domin.chatappv2.Helper.Convertor.Base64ImageConvertorResponse;
+import cz.domin.chatappv2.Helper.Response.Response;
 import cz.domin.chatappv2.Helper.Response.ServiceResponse;
+import cz.domin.chatappv2.Model.Friendship;
 import cz.domin.chatappv2.Model.Person;
 import cz.domin.chatappv2.Model.VisibilityStatus;
 import cz.domin.chatappv2.Repository.PersonRepository;
@@ -12,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -67,5 +72,23 @@ public class PersonService {
     }
     public Boolean isUserExistsWithEmail(String email) {
         return this.getPersonByEmail(email) != null;
+    }
+
+    public ServiceResponse<List<Person>> getAllAvailablePeople(String personUuid, String searchText) {
+        Person person = this.getPersonByUuid(personUuid);
+        List<Person> people =
+                personRepository.findPeopleByLastNameContainsIgnoreCaseOrFirstNameContainsIgnoreCaseOrNicknameContainsIgnoreCaseAndVisibility(
+                        searchText,
+                        searchText,
+                        searchText,
+                        visibilityStatusService.getById(VisibilityStatus.VISIBLE)
+                );
+        // TODO: 9/25/2022 pridat funkcionalitu, aby vracel pouze lidi, ktere jeste nema v friendship, pokud ma tak pouze REJECTED status  
+        people = people
+                .stream()
+                .filter(p -> !p.getUuid().equals(personUuid))
+                .collect(Collectors.toList());
+
+        return new ServiceResponse<>(people, "Available people", ServiceResponse.OK);
     }
 }
