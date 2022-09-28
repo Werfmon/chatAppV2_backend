@@ -3,28 +3,21 @@ package cz.domin.chatappv2.Service;
 import cz.domin.chatappv2.Controller.dto.create.NewPersonDTO;
 import cz.domin.chatappv2.Helper.Convertor.Base64ImageConvertor;
 import cz.domin.chatappv2.Helper.Convertor.Base64ImageConvertorResponse;
-import cz.domin.chatappv2.Helper.Response.Response;
 import cz.domin.chatappv2.Helper.Response.ServiceResponse;
 import cz.domin.chatappv2.Model.Friendship;
+import cz.domin.chatappv2.Model.FriendshipStatus;
 import cz.domin.chatappv2.Model.Person;
 import cz.domin.chatappv2.Model.VisibilityStatus;
+import cz.domin.chatappv2.Repository.FriendshipRepository;
+import cz.domin.chatappv2.Repository.FriendshipStatusRepository;
 import cz.domin.chatappv2.Repository.PersonRepository;
-import cz.domin.chatappv2.Repository.VisibilityStatusRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +29,8 @@ public class PersonService {
     private final VisibilityStatusService visibilityStatusService;
     private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final FriendshipRepository friendshipRepository;
+    private final FriendshipStatusService friendshipStatusService;
 
     public Person getPersonByUuid(String uuid) {
         return personRepository.findById(uuid).orElse(null);
@@ -84,9 +79,29 @@ public class PersonService {
                         visibilityStatusService.getById(VisibilityStatus.VISIBLE)
                 );
         // TODO: 9/25/2022 pridat funkcionalitu, aby vracel pouze lidi, ktere jeste nema v friendship, pokud ma tak pouze REJECTED status  
+
+        List<Friendship> friendships =
+                friendshipRepository.findFriendshipsByMainPersonOrPersonAndStatusNot(
+                        person,
+                        person,
+                        friendshipStatusService.getById(FriendshipStatus.REJECTED)
+                );
+
         people = people
                 .stream()
                 .filter(p -> !p.getUuid().equals(personUuid))
+                .filter(p ->
+                        friendships
+                                .stream()
+                                .filter(f -> {
+                                    if (f.getPerson().getUuid() == p.getUuid() || f.getMainPerson().getUuid() == p.getUuid()) {
+                                        return false;
+                                    }
+                                    return true;
+                                })
+                                .collect(Collectors.toList())
+                                .isEmpty()
+                )
                 .collect(Collectors.toList());
 
         return new ServiceResponse<>(people, "Available people", ServiceResponse.OK);
