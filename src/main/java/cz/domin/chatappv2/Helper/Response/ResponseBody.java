@@ -8,4 +8,5 @@ import lombok.Getter;
 public class ResponseBody<T> {
     private T data;
     private String message;
+    private Boolean ok;
 }

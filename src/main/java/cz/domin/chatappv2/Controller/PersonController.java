@@ -2,7 +2,6 @@ package cz.domin.chatappv2.Controller;
 
 import cz.domin.chatappv2.Helper.Response.Response;
 import cz.domin.chatappv2.Helper.Response.ServiceResponse;
-import cz.domin.chatappv2.Model.Friendship;
 import cz.domin.chatappv2.Model.Person;
 import cz.domin.chatappv2.Controller.dto.create.NewPersonDTO;
 import cz.domin.chatappv2.Service.PersonService;
@@ -23,14 +22,14 @@ public class PersonController {
 
 
     @PostMapping("/registration")
-    public Response create(@RequestBody NewPersonDTO newPersonDTO) {
+    public Response<Person> create(@RequestBody NewPersonDTO newPersonDTO) {
         ServiceResponse<Person> serviceResponse = personService.create(newPersonDTO);
         Response<Person> response;
 
         if (serviceResponse.getStatus() == ServiceResponse.OK) {
-            response = new Response(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage());
+            response = new Response(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
         } else {
-            response = new Response(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage());
+            response = new Response(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
         }
 
         return response;
@@ -42,6 +41,6 @@ public class PersonController {
 
         ServiceResponse<List<Person>> serviceResponse = personService.getAllAvailablePeople(person.getUuid(), searchText);
 
-        return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage());
+        return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
     }
 }

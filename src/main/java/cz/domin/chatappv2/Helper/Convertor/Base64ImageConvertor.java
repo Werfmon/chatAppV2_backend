@@ -18,7 +18,7 @@ public class Base64ImageConvertor {
             ext = base64Image.substring("data:image/".length(), base64Image.indexOf(";base64"));
             String base64 = base64Image.replace("data:image/" + ext + ";base64,", "");
             imageByteFormat = Base64.getDecoder().decode(base64);
-        } catch (IllegalArgumentException | NullPointerException e) {
+        } catch (IllegalArgumentException | NullPointerException | StringIndexOutOfBoundsException e) {
             convertorResponse.setResponse("Invalid base64 format");
             return convertorResponse;
         }

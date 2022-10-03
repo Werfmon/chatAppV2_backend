@@ -12,8 +12,8 @@ public class Response<T> extends ResponseEntity {
         super(status);
     }
 
-    public Response(T data, HttpStatus status, String message) {
-        super(new ResponseBody<>(data, message), status);
+    public Response(T data, HttpStatus status, String message, Boolean ok) {
+        super(new ResponseBody<>(data, message, ok), status);
     }
 
     public Response(MultiValueMap headers, HttpStatus status) {
