@@ -1,6 +1,7 @@
 package cz.domin.chatappv2.Service;
 
 import cz.domin.chatappv2.Controller.dto.create.NewPersonDTO;
+import cz.domin.chatappv2.Controller.dto.read.ReadPersonDTO;
 import cz.domin.chatappv2.Helper.Convertor.Base64ImageConvertor;
 import cz.domin.chatappv2.Helper.Convertor.Base64ImageConvertorResponse;
 import cz.domin.chatappv2.Helper.Response.ServiceResponse;
@@ -9,7 +10,6 @@ import cz.domin.chatappv2.Model.FriendshipStatus;
 import cz.domin.chatappv2.Model.Person;
 import cz.domin.chatappv2.Model.VisibilityStatus;
 import cz.domin.chatappv2.Repository.FriendshipRepository;
-import cz.domin.chatappv2.Repository.FriendshipStatusRepository;
 import cz.domin.chatappv2.Repository.PersonRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +78,6 @@ public class PersonService {
                         searchText,
                         visibilityStatusService.getById(VisibilityStatus.VISIBLE)
                 );
-        // TODO: 9/25/2022 pridat funkcionalitu, aby vracel pouze lidi, ktere jeste nema v friendship, pokud ma tak pouze REJECTED status  
 
         List<Friendship> friendships =
                 friendshipRepository.findFriendshipsByMainPersonOrPersonAndStatusNot(
@@ -105,5 +104,16 @@ public class PersonService {
                 .collect(Collectors.toList());
 
         return new ServiceResponse<>(people, "Available people", ServiceResponse.OK);
+    }
+    public ServiceResponse<ReadPersonDTO> getPersonForResponse(Person person) {
+        ReadPersonDTO readPersonDTO = modelMapper.map(person, ReadPersonDTO.class);
+        Base64ImageConvertorResponse base64ImageConvertorResponse = Base64ImageConvertor.load(person.getImagePath());
+
+        if (base64ImageConvertorResponse.isStatus()) {
+            readPersonDTO.setBase64Image(base64ImageConvertorResponse.getResponse());
+        } else {
+            return new ServiceResponse<>(null, base64ImageConvertorResponse.getResponse(), ServiceResponse.ERROR);
+        }
+        return new ServiceResponse<>(readPersonDTO, "Person created", ServiceResponse.OK);
     }
 }

@@ -1,5 +1,6 @@
 package cz.domin.chatappv2.Service;
 
+import cz.domin.chatappv2.Helper.Response.ServiceResponse;
 import cz.domin.chatappv2.Model.Person;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
