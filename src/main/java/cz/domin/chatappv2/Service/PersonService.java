@@ -17,8 +17,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.management.AttributeNotFoundException;
+import java.io.NotActiveException;
+import java.rmi.NotBoundException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,7 +73,7 @@ public class PersonService {
         return this.getPersonByEmail(email) != null;
     }
 
-    public ServiceResponse<List<Person>> getAllAvailablePeople(String personUuid, String searchText) {
+    public ServiceResponse<List<ReadPersonDTO>> getAllAvailablePeople(String personUuid, String searchText) {
         Person person = this.getPersonByUuid(personUuid);
         List<Person> people =
                 personRepository.findPeopleByLastNameContainsIgnoreCaseOrFirstNameContainsIgnoreCaseOrNicknameContainsIgnoreCaseAndVisibility(
@@ -85,25 +89,32 @@ public class PersonService {
                         person,
                         friendshipStatusService.getById(FriendshipStatus.REJECTED)
                 );
-
-        people = people
-                .stream()
-                .filter(p -> !p.getUuid().equals(personUuid))
-                .filter(p ->
-                        friendships
-                                .stream()
-                                .filter(f -> {
-                                    if (f.getPerson().getUuid() == p.getUuid() || f.getMainPerson().getUuid() == p.getUuid()) {
+            List<ReadPersonDTO> readPersonDTOList = people
+                    .stream()
+                    .filter(p -> !p.getUuid().equals(personUuid))
+                    .filter(p ->
+                            friendships
+                                    .stream()
+                                    .filter(f -> {
+                                        if (Objects.equals(f.getPerson().getUuid(), p.getUuid()) || Objects.equals(f.getMainPerson().getUuid(), p.getUuid())) {
+                                            return true;
+                                        }
                                         return false;
-                                    }
-                                    return true;
-                                })
-                                .collect(Collectors.toList())
-                                .isEmpty()
-                )
-                .collect(Collectors.toList());
+                                    })
+                                    .collect(Collectors.toList())
+                                    .isEmpty()
+                    )
+                    .map(p -> {
+                        ReadPersonDTO rpDTO = modelMapper.map(p, ReadPersonDTO.class);
+                        Base64ImageConvertorResponse base64ImageConvertorResponse = Base64ImageConvertor.load(p.getImagePath());
+                        if (base64ImageConvertorResponse.isStatus()) {
+                            rpDTO.setBase64Image(base64ImageConvertorResponse.getResponse());
+                        }
+                        return rpDTO;
+                    }).collect(Collectors.toList());
 
-        return new ServiceResponse<>(people, "Available people", ServiceResponse.OK);
+
+        return new ServiceResponse<>(readPersonDTOList, "Available people", ServiceResponse.OK);
     }
     public ServiceResponse<ReadPersonDTO> getPersonForResponse(Person person) {
         ReadPersonDTO readPersonDTO = modelMapper.map(person, ReadPersonDTO.class);

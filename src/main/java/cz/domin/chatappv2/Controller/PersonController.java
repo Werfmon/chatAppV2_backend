@@ -1,5 +1,6 @@
 package cz.domin.chatappv2.Controller;
 
+import cz.domin.chatappv2.Controller.dto.read.ReadPersonDTO;
 import cz.domin.chatappv2.Helper.Response.Response;
 import cz.domin.chatappv2.Helper.Response.ServiceResponse;
 import cz.domin.chatappv2.Model.Person;
@@ -35,11 +36,11 @@ public class PersonController {
         return response;
     }
     @GetMapping("/all-available")
-    public Response<List<Person>> getAllAvailablePeople(Authentication authentication, @RequestParam(name = "search") String searchText) {
+    public Response<List<ReadPersonDTO>> getAllAvailablePeople(Authentication authentication, @RequestParam(name = "search") String searchText) {
         String email = authentication.getPrincipal().toString();
         Person person = personService.getPersonByEmail(email);
 
-        ServiceResponse<List<Person>> serviceResponse = personService.getAllAvailablePeople(person.getUuid(), searchText);
+        ServiceResponse<List<ReadPersonDTO>> serviceResponse = personService.getAllAvailablePeople(person.getUuid(), searchText);
 
         return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
     }
