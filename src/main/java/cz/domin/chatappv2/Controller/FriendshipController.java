@@ -1,5 +1,6 @@
 package cz.domin.chatappv2.Controller;
 
+import cz.domin.chatappv2.Controller.dto.read.ReadPersonDTO;
 import cz.domin.chatappv2.Helper.Response.Response;
 import cz.domin.chatappv2.Helper.Response.ServiceResponse;
 import cz.domin.chatappv2.Model.Friendship;
@@ -7,6 +8,7 @@ import cz.domin.chatappv2.Model.Person;
 import cz.domin.chatappv2.Service.FriendshipService;
 import cz.domin.chatappv2.Service.PersonService;
 import lombok.AllArgsConstructor;
+import org.json.HTTP;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -73,7 +75,19 @@ public class FriendshipController {
             return new Response<>(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
         }
 
-        return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
+        return new Response<>(serviceResponse.getData(), HttpStatus.OK, "Friendship was rejected", true);
+    }
+    @GetMapping("/all/waiting")
+    public Response<List<ReadPersonDTO>> getWaitingFriendships(Authentication authentication) {
+        String email = authentication.getPrincipal().toString();
+        Person person = personService.getPersonByEmail(email);
+
+        ServiceResponse<List<ReadPersonDTO>> serviceResponse = friendshipService.getWaitingFriendships(person.getUuid());
+
+        if (serviceResponse.getStatus() == ServiceResponse.OK) {
+            return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
+        }
+        return new Response<>(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
     }
 
 }
