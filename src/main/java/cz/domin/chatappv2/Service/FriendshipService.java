@@ -5,9 +5,11 @@ import cz.domin.chatappv2.Controller.dto.read.ReadPersonDTO;
 import cz.domin.chatappv2.Helper.Convertor.Base64ImageConvertor;
 import cz.domin.chatappv2.Helper.Convertor.Base64ImageConvertorResponse;
 import cz.domin.chatappv2.Helper.Response.ServiceResponse;
+import cz.domin.chatappv2.Model.Chat;
 import cz.domin.chatappv2.Model.Friendship;
 import cz.domin.chatappv2.Model.FriendshipStatus;
 import cz.domin.chatappv2.Model.Person;
+import cz.domin.chatappv2.Repository.ChatRepository;
 import cz.domin.chatappv2.Repository.FriendshipRepository;
 import cz.domin.chatappv2.Repository.FriendshipStatusRepository;
 import lombok.AllArgsConstructor;
@@ -23,6 +25,7 @@ public class FriendshipService {
     private final PersonService personService;
     private final FriendshipStatusService friendshipStatusService;
     private final FriendshipRepository friendshipRepository;
+    private final ChatRepository chatRepository;
     private final ModelMapper modelMapper;
 
     public ServiceResponse<Friendship> createFriendship(String mainUuid, String uuid) {
@@ -74,7 +77,11 @@ public class FriendshipService {
 
         Friendship savedFriendship = friendshipRepository.save(friendship);
 
-        return new ServiceResponse<>(savedFriendship, "Friendship accepted", ServiceResponse.OK);
+        Chat chat = new Chat();
+        chat.setFriendship(savedFriendship);
+        chatRepository.save(chat);
+
+        return new ServiceResponse<>(savedFriendship, "Friendship accepted and chat created", ServiceResponse.OK);
     }
     public ServiceResponse<Friendship> rejectFriendship(String personUuid, String mainPersonUuid) {
         Person person = personService.getPersonByUuid(personUuid);
