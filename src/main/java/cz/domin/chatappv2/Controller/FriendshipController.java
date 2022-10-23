@@ -8,7 +8,6 @@ import cz.domin.chatappv2.Model.Person;
 import cz.domin.chatappv2.Service.FriendshipService;
 import cz.domin.chatappv2.Service.PersonService;
 import lombok.AllArgsConstructor;
-import org.json.HTTP;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -29,19 +28,16 @@ public class FriendshipController {
         Person mainPerson = personService.getPersonByEmail(email);
 
         if (mainPerson == null) {
-            return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error with authentication", false);
+            return new Response<>(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error with authentication", false);
         }
 
         ServiceResponse<Friendship> serviceResponse = friendshipService.createFriendship(mainPerson.getUuid(), uuid);
 
-        Response response;
 
         if(serviceResponse.getStatus() == ServiceResponse.OK) {
-            response = new Response(serviceResponse.getData(), HttpStatus.OK, "Waiting to accept", true);
-        } else {
-            response = new Response(null, HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
+            return new Response<>(serviceResponse.getData(), HttpStatus.OK, "Waiting to accept", true);
         }
-        return response;
+        return new Response<>(null, HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
     }
     @PutMapping("/{main_uuid}/accept")
     public Response<Friendship> acceptFriendship(Authentication authentication, @PathVariable(name = "main_uuid") String mainPersonUuid) {
@@ -49,7 +45,7 @@ public class FriendshipController {
         Person person = personService.getPersonByEmail(email);
 
         if (person == null) {
-            return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error with authentication", false);
+            return new Response<>(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error with authentication", false);
         }
 
         ServiceResponse<Friendship> serviceResponse = friendshipService.acceptFriendship(person.getUuid(), mainPersonUuid);
@@ -66,7 +62,7 @@ public class FriendshipController {
         Person person = personService.getPersonByEmail(email);
 
         if (person == null) {
-            return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error with authentication", false);
+            return new Response<>(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error with authentication", false);
         }
 
         ServiceResponse<Friendship> serviceResponse = friendshipService.rejectFriendship(person.getUuid(), mainPersonUuid);
