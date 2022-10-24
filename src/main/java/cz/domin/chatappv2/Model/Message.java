@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ public class Message {
     private String uuid = UUID.randomUUID().toString();
 
     @Column(name = "sent_date", nullable = false)
-    private Date sentDate;
+    private LocalDateTime sentDate = LocalDateTime.now();
 
     @Column(nullable = false)
     @Lob
