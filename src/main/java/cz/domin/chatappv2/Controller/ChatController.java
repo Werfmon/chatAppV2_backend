@@ -1,19 +1,22 @@
 package cz.domin.chatappv2.Controller;
 
 import cz.domin.chatappv2.Controller.dto.read.ReadChatDTO;
+import cz.domin.chatappv2.Controller.dto.read.ReadMessageDTO;
 import cz.domin.chatappv2.Helper.Response.Response;
 import cz.domin.chatappv2.Helper.Response.ServiceResponse;
 import cz.domin.chatappv2.Model.Chat;
+import cz.domin.chatappv2.Model.Message;
 import cz.domin.chatappv2.Model.Person;
 import cz.domin.chatappv2.Service.ChatService;
+import cz.domin.chatappv2.Service.MessageService;
 import cz.domin.chatappv2.Service.PersonService;
 import lombok.AllArgsConstructor;
 
+import org.modelmapper.ModelMapper;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,6 +26,8 @@ import java.util.List;
 public class ChatController {
     private final PersonService personService;
     private final ChatService chatService;
+    private final MessageService messageService;
+
     @GetMapping("/current-person")
     public Response<List<ReadChatDTO>> getPersonChats(Authentication authentication) {
         String email = authentication.getPrincipal().toString();
@@ -32,6 +37,15 @@ public class ChatController {
             return new Response<>(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error with authentication", false);
         }
         ServiceResponse<List<ReadChatDTO>> serviceResponse = chatService.getPersonChats(person.getUuid());
+        if (serviceResponse.getStatus() == ServiceResponse.ERROR) {
+            return new Response<>(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
+        }
+        return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
+    }
+    @GetMapping("/{chat_uuid}/messages")
+    public Response<List<ReadMessageDTO>> getChatMessageBy(@PathVariable(name = "chat_uuid") String chatUuid, @RequestParam Integer limit, @RequestParam Integer offset) {
+        ServiceResponse<List<ReadMessageDTO>> serviceResponse = messageService.getChatMessagesBy(chatUuid, limit, offset);
+
         if (serviceResponse.getStatus() == ServiceResponse.ERROR) {
             return new Response<>(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
         }

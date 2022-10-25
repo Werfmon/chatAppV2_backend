@@ -3,11 +3,9 @@ package cz.domin.chatappv2.Service;
 import cz.domin.chatappv2.Controller.dto.read.ReadChatDTO;
 import cz.domin.chatappv2.Helper.Convertor.Base64ImageConvertor;
 import cz.domin.chatappv2.Helper.Convertor.Base64ImageConvertorResponse;
+import cz.domin.chatappv2.Helper.Response.Response;
 import cz.domin.chatappv2.Helper.Response.ServiceResponse;
-import cz.domin.chatappv2.Model.Chat;
-import cz.domin.chatappv2.Model.Friendship;
-import cz.domin.chatappv2.Model.FriendshipStatus;
-import cz.domin.chatappv2.Model.Person;
+import cz.domin.chatappv2.Model.*;
 import cz.domin.chatappv2.Repository.ChatRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -61,4 +59,5 @@ public class ChatService {
 
         return new ServiceResponse<>(readChatDTOS, "Returned user`s chat", ServiceResponse.OK);
     }
+
 }

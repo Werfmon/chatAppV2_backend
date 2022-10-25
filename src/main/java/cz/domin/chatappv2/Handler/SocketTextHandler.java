@@ -17,6 +17,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 @Slf4j
@@ -50,23 +51,39 @@ public class SocketTextHandler extends TextWebSocketHandler {
     }
 
     @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException, NullPointerException {
+    public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException, NullPointerException, IndexOutOfBoundsException {
         final String path = session.getUri().getPath();
         final String uuid = path.substring(path.lastIndexOf("/") + 1);
 
-        final String personUuid = uuid.substring(36, 72);
         final String chatUuid = uuid.substring(0, 36);
+        final String personUuid = uuid.substring(36, 72);
 
+        ServiceResponse<Void> serviceResponse = messageService.saveMessage(chatUuid, personUuid, message.getPayload());
 
         if (sessions.containsKey(chatUuid)) {
+            if (serviceResponse.getStatus() == ServiceResponse.ERROR) {
+                if (Objects.equals(sessions.get(chatUuid).getMainPersonUuid(), personUuid)) {
+                    sessions.get(chatUuid)
+                            .getMainPersonWebSocketSession()
+                            .sendMessage(
+                                    new TextMessage(serviceResponse.getMessage())
+                            );
+                }
+                if (Objects.equals(sessions.get(chatUuid).getPersonUuid(), personUuid)) {
+                    sessions.get(chatUuid)
+                            .getPersonWebSocketSession()
+                            .sendMessage(
+                                    new TextMessage(serviceResponse.getMessage())
+                            );
+                }
+            }
+
             if (sessions.get(chatUuid).getPersonUuid() != null) {
                 sessions.get(chatUuid).getPersonWebSocketSession().sendMessage(new TextMessage(message.getPayload()));
             }
             if (sessions.get(chatUuid).getMainPersonUuid() != null) {
                 sessions.get(chatUuid).getMainPersonWebSocketSession().sendMessage(new TextMessage(message.getPayload()));
             }
-            ServiceResponse<Void> serviceResponse = messageService.saveMessage(chatUuid, personUuid, message.getPayload());
-            log.info(serviceResponse.getMessage());
         }
     }
 
