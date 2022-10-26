@@ -29,7 +29,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             doFilter(request, response, filterChain);
             return;
         }
-
         if(authHeader == null || !authHeader.startsWith(SecurityConstants.TOKEN_PREFIX)) {
             log.error("Bad token");
             doFilter(request, response, filterChain);

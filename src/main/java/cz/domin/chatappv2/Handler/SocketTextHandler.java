@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -27,14 +28,15 @@ public class SocketTextHandler extends TextWebSocketHandler {
 
     private MessageService messageService;
 
+
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        log.info("Trying to connect socket");
         final String path = session.getUri().getPath();
         final String uuid = path.substring(path.lastIndexOf("/") + 1);
 
         final String personUuid = uuid.substring(36, 72);
         final String chatUuid = uuid.substring(0, 36);
-
         if (!sessions.containsKey(chatUuid)) {
             sessions.put(chatUuid, new ChatSocketSessionInfo());
         }
