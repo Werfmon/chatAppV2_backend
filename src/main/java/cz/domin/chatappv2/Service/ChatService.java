@@ -8,13 +8,14 @@ import cz.domin.chatappv2.Helper.Response.ServiceResponse;
 import cz.domin.chatappv2.Model.*;
 import cz.domin.chatappv2.Repository.ChatRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class ChatService {
     private final ChatRepository chatRepository;
@@ -32,10 +33,14 @@ public class ChatService {
          );
 
          List<ReadChatDTO> readChatDTOS = chats.stream().map(c -> {
+
              ReadChatDTO readChatDTO = modelMapper.map(c, ReadChatDTO.class);
+             readChatDTO.getFriendship().getMainPerson().setUuid(c.getFriendship().getMainPerson().getUuid());
+             readChatDTO.getFriendship().getPerson().setUuid(c.getFriendship().getPerson().getUuid());
+             log.info(readChatDTO.getFriendship().getPerson().getUuid());
+             log.info(readChatDTO.getFriendship().getMainPerson().getUuid());
              String imagePath;
              Base64ImageConvertorResponse base64ImageConvertorResponse;
-
              imagePath = c.getFriendship().getMainPerson().getImagePath();
              base64ImageConvertorResponse = Base64ImageConvertor.load(imagePath);
 

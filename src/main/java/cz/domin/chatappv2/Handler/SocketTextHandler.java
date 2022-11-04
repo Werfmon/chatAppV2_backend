@@ -62,31 +62,33 @@ public class SocketTextHandler extends TextWebSocketHandler {
 
         ServiceResponse<Void> serviceResponse = messageService.saveMessage(chatUuid, personUuid, message.getPayload());
 
-        if (sessions.containsKey(chatUuid)) {
-            if (serviceResponse.getStatus() == ServiceResponse.ERROR) {
-                if (Objects.equals(sessions.get(chatUuid).getMainPersonUuid(), personUuid)) {
-                    sessions.get(chatUuid)
-                            .getMainPersonWebSocketSession()
-                            .sendMessage(
-                                    new TextMessage(serviceResponse.getMessage())
-                            );
-                }
-                if (Objects.equals(sessions.get(chatUuid).getPersonUuid(), personUuid)) {
-                    sessions.get(chatUuid)
-                            .getPersonWebSocketSession()
-                            .sendMessage(
-                                    new TextMessage(serviceResponse.getMessage())
-                            );
-                }
-            }
+// TODO: implementovat error hlasky
 
-            if (sessions.get(chatUuid).getPersonUuid() != null) {
-                sessions.get(chatUuid).getPersonWebSocketSession().sendMessage(new TextMessage(message.getPayload()));
-            }
-            if (sessions.get(chatUuid).getMainPersonUuid() != null) {
+//        if (sessions.containsKey(chatUuid)) {
+//            if (serviceResponse.getStatus() == ServiceResponse.ERROR) {
+//                if (Objects.equals(sessions.get(chatUuid).getMainPersonUuid(), personUuid)) {
+//                    sessions.get(chatUuid)
+//                            .getPersonWebSocketSession()
+//                            .sendMessage(
+//                                    new TextMessage(serviceResponse.getMessage())
+//                            );
+//                }
+//                if (Objects.equals(sessions.get(chatUuid).getPersonUuid(), personUuid)) {
+//                    sessions.get(chatUuid)
+//                            .getMainPersonWebSocketSession()
+//                            .sendMessage(
+//                                    new TextMessage(serviceResponse.getMessage())
+//                            );
+//                }
+//            }
+
+            if (Objects.equals(sessions.get(chatUuid).getPersonUuid(), personUuid)) {
                 sessions.get(chatUuid).getMainPersonWebSocketSession().sendMessage(new TextMessage(message.getPayload()));
             }
-        }
+            if (Objects.equals(sessions.get(chatUuid).getMainPersonUuid(), personUuid)) {
+                sessions.get(chatUuid).getPersonWebSocketSession().sendMessage(new TextMessage(message.getPayload()));
+            }
+
     }
 
     @Override
