@@ -12,6 +12,7 @@ import cz.domin.chatappv2.Service.MessageService;
 import cz.domin.chatappv2.Service.PersonService;
 import lombok.AllArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/chat")
 @AllArgsConstructor
+@Slf4j
 public class ChatController {
     private final PersonService personService;
     private final ChatService chatService;
@@ -32,6 +34,7 @@ public class ChatController {
     public Response<List<ReadChatDTO>> getPersonChats(Authentication authentication) {
         String email = authentication.getPrincipal().toString();
         Person person = personService.getPersonByEmail(email);
+        log.info(person.getEmail());
 
         if (person == null) {
             return new Response<>(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error with authentication", false);
