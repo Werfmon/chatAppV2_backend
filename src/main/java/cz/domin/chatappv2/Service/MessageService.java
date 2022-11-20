@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,10 +34,10 @@ public class MessageService {
         Person person = personRepository.findById(personUUid).orElse(null);
 
         if (chat == null) {
-            return new ServiceResponse<>(null, "{\"text\": \"Cannot find chat\", \"status\": \"0\" }", ServiceResponse.ERROR);
+            return new ServiceResponse<>(null, "{\"message\": \"Cannot find chat\", \"status\": \"0\" }", ServiceResponse.ERROR);
         }
         if (person == null) {
-            return new ServiceResponse<>(null, "{\"text\": \"Cannot find person\", \"status\": \"0\" }", ServiceResponse.ERROR);
+            return new ServiceResponse<>(null, "{\"message\": \"Cannot find person\", \"status\": \"0\" }", ServiceResponse.ERROR);
         }
 
         message.setChat(chat);
@@ -49,8 +51,8 @@ public class MessageService {
     public ServiceResponse<List<ReadMessageDTO>> getChatMessagesBy(String chatUuid, Integer limit, Integer offset) {
         List<Message> messages = messageRepository.findMessagesByChat(chatUuid, limit, offset);
 
-        List<ReadMessageDTO> readMessageDTOs = messages.stream().map(m -> modelMapper.map(m, ReadMessageDTO.class)).toList();
-
+        List<ReadMessageDTO> readMessageDTOs = new ArrayList<>(messages.stream().map(m -> modelMapper.map(m, ReadMessageDTO.class)).toList());
+        Collections.reverse(readMessageDTOs);
         return new ServiceResponse<>(readMessageDTOs, "Returned Messages", ServiceResponse.OK);
     }
 }

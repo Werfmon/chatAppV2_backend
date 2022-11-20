@@ -73,14 +73,4 @@ public class ChatService {
 
         return new ServiceResponse<>(readChatDTOS, "Returned user`s chat", ServiceResponse.OK);
     }
-    public ServiceResponse<Boolean> isPersonMainByChatUuidAndPersonUuid(String chatUuid, String personUuid) {
-        Chat chat = chatRepository.findById(chatUuid).orElse(null);
-        if (chat == null) {
-            return new ServiceResponse<>(null, "Not found", ServiceResponse.ERROR);
-        }
-        if (chat.getFriendship().getMainPerson().getUuid() == personUuid) {
-            return new ServiceResponse<>(true, "", ServiceResponse.OK);
-        }
-        return new ServiceResponse<>(false, "", ServiceResponse.OK);
-    }
 }
