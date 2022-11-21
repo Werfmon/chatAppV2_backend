@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,15 +32,14 @@ public class ChatController {
     private final MessageService messageService;
 
     @GetMapping("/current-person")
-    public Response<List<ReadChatDTO>> getPersonChats(Authentication authentication) {
+    public Response<List<ReadChatDTO>> getPersonChats(Authentication authentication, @RequestParam String search, @RequestParam Integer limit, @RequestParam Integer offset) {
         String email = authentication.getPrincipal().toString();
         Person person = personService.getPersonByEmail(email);
-        log.info(person.getEmail());
 
         if (person == null) {
             return new Response<>(null, HttpStatus.INTERNAL_SERVER_ERROR, "Error with authentication", false);
         }
-        ServiceResponse<List<ReadChatDTO>> serviceResponse = chatService.getPersonChats(person.getUuid());
+        ServiceResponse<List<ReadChatDTO>> serviceResponse = chatService.getPersonChats(person.getUuid(), search, limit, offset);
         if (serviceResponse.getStatus() == ServiceResponse.ERROR) {
             return new Response<>(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
         }

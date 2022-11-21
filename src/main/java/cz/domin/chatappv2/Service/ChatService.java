@@ -12,6 +12,7 @@ import cz.domin.chatappv2.Repository.ChatRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,16 +23,15 @@ import java.util.List;
 public class ChatService {
     private final ChatRepository chatRepository;
     private final ModelMapper modelMapper;
-    private final PersonService personService;
-    private final FriendshipStatusService friendshipStatusService;
 
-    public ServiceResponse<List<ReadChatDTO>> getPersonChats(String uuid) {
-         Person person = personService.getPersonByUuid(uuid);
 
-         List<Chat> chats = chatRepository.findChatsByFriendship_MainPersonOrFriendship_PersonAndFriendship_Status(
-                 person,
-                 person,
-                 friendshipStatusService.getById(FriendshipStatus.ACCEPTED)
+    public ServiceResponse<List<ReadChatDTO>> getPersonChats(String uuid, String searchText, int limit, int offset) {
+         List<Chat> chats = chatRepository.findChatsBy(
+                 uuid,
+                 FriendshipStatus.ACCEPTED,
+                 "%" + searchText + "%",
+                 limit,
+                 offset
          );
 
          List<ReadChatDTO> readChatDTOS = chats.stream().map(c -> {
@@ -44,9 +44,6 @@ public class ChatService {
              readFriendshipDTO.setPerson(personDTO);
              readFriendshipDTO.setMainPerson(mainPersonDTO);
              readChatDTO.setFriendship(readFriendshipDTO);
-
-             log.info(readChatDTO.getFriendship().getPerson().getUuid());
-             log.info(readChatDTO.getFriendship().getMainPerson().getUuid());
 
              String imagePath;
              Base64ImageConvertorResponse base64ImageConvertorResponse;
