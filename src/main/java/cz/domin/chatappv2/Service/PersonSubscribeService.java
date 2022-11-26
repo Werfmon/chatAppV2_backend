@@ -25,4 +25,11 @@ public class PersonSubscribeService {
 
         return new ServiceResponse<>(null, "Updated token in PersonSubscribe", ServiceResponse.OK);
     }
+    public ServiceResponse<String> getTokenByPerson(Person person) {
+        PersonSubscribe personSubscribe = personSubscribeRepository.findPersonSubscribeByPerson(person).orElse(null);
+        if (personSubscribe != null) {
+            return new ServiceResponse<>(personSubscribe.getToken(), "FCM Token from PersonSubscribe", ServiceResponse.OK);
+        }
+        return new ServiceResponse<>(null, "Error, not found PersonSubscribe", ServiceResponse.ERROR);
+    }
 }

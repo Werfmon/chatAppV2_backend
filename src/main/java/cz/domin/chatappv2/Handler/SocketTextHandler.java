@@ -1,23 +1,30 @@
 package cz.domin.chatappv2.Handler;
 
+import com.google.gson.Gson;
+import cz.domin.chatappv2.Controller.dto.create.FCM.FCMNotificationPart;
+import cz.domin.chatappv2.Controller.dto.create.FCM.FCMRequestDTO;
+import cz.domin.chatappv2.Helper.Notifications.SendNotification;
 import cz.domin.chatappv2.Helper.Response.ServiceResponse;
 import cz.domin.chatappv2.Helper.Sockets.ChatSocketSessionInfo;
+import cz.domin.chatappv2.Model.Chat;
+import cz.domin.chatappv2.Model.Person;
 import cz.domin.chatappv2.Service.ChatService;
 import cz.domin.chatappv2.Service.MessageService;
+import cz.domin.chatappv2.Service.PersonService;
+import cz.domin.chatappv2.Service.PersonSubscribeService;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,8 +37,11 @@ import java.util.Objects;
 public class SocketTextHandler extends TextWebSocketHandler {
     Map<String, ChatSocketSessionInfo> sessions = new HashMap<>();
 
-    private MessageService messageService;
-
+    private final MessageService messageService;
+    private final PersonService personService;
+    private final ChatService chatService;
+    private final PersonSubscribeService personSubscribeService;
+    private final SendNotification sendNotification;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -50,7 +60,7 @@ public class SocketTextHandler extends TextWebSocketHandler {
             if (sessions.get(chatUuid).getMainPersonUuid() == null) {
                 sessions.get(chatUuid).setMainPersonUuid(personUuid);
                 sessions.get(chatUuid).setMainPersonWebSocketSession(session);
-            } else if (sessions.get(chatUuid).getPersonUuid() == null) {
+            } else if (sessions.get(chatUuid).getPersonUuid() == null && !Objects.equals(sessions.get(chatUuid).getMainPersonUuid(), personUuid)) {
                 sessions.get(chatUuid).setPersonUuid(personUuid);
                 sessions.get(chatUuid).setPersonWebSocketSession(session);
             }
@@ -88,13 +98,21 @@ public class SocketTextHandler extends TextWebSocketHandler {
 //                            );
 //                }
 //            }
+
+            log.info(sessions.get(chatUuid).getMainPersonUuid());
+            log.info(sessions.get(chatUuid).getPersonUuid());
+
             if (Objects.equals(sessions.get(chatUuid).getPersonUuid(), personUuid)) {
                 if (sessions.get(chatUuid).getMainPersonUuid() != null) {
                     sessions.get(chatUuid).getMainPersonWebSocketSession().sendMessage(new TextMessage(message.getPayload()));
+                } else {
+                    sendNotification.sendNotification(chatUuid, personUuid, message);
                 }
             } else {
                 if (sessions.get(chatUuid).getPersonUuid() != null) {
                     sessions.get(chatUuid).getPersonWebSocketSession().sendMessage(new TextMessage(message.getPayload()));
+                } else {
+                    sendNotification.sendNotification(chatUuid, personUuid, message);
                 }
             }
     }

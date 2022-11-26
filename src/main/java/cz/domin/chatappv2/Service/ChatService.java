@@ -70,4 +70,12 @@ public class ChatService {
 
         return new ServiceResponse<>(readChatDTOS, "Returned user`s chat", ServiceResponse.OK);
     }
+    public ServiceResponse<Chat> findChat(String chatUuid) {
+        Chat chat = chatRepository.findById(chatUuid).orElse(null);
+
+        if (chat == null) {
+            return new ServiceResponse<>(null, "Chat not found", ServiceResponse.ERROR);
+        }
+        return new ServiceResponse<>(chat, "Chat was found", ServiceResponse.OK);
+    }
 }
