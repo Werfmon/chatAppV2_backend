@@ -64,8 +64,10 @@ public class ChatController {
         return new Response<>(HttpStatus.BAD_REQUEST);
     }
     @PutMapping("/{chat_uuid}/messages/set-seen/latest")
-    public Response<Void> setSeenLastMessagesAfterPerson(@PathVariable(name = "chat_uuid") String chatUuid) {
-        ServiceResponse<Void> serviceResponse = messageService.setAllLastMessagesToSeen(chatUuid);
+    public Response<Void> setSeenLastMessagesAfterPerson(Authentication authentication, @PathVariable(name = "chat_uuid") String chatUuid) {
+        String email = authentication.getPrincipal().toString();
+        Person person = personService.getPersonByEmail(email);
+        ServiceResponse<Void> serviceResponse = messageService.setAllLastMessagesToSeen(person, chatUuid);
         return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
     }
 }

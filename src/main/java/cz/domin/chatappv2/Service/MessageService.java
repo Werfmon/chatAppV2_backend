@@ -75,8 +75,8 @@ public class MessageService {
 
         return new ServiceResponse<>(readChatDTO, "Returned last message", ServiceResponse.OK);
     }
-    public ServiceResponse<Void> setAllLastMessagesToSeen(String chatUuid) {
-        List<Message> messages = messageRepository.findMessagesByChat_UuidAndAndSeen(chatUuid, false);
+    public ServiceResponse<Void> setAllLastMessagesToSeen(Person person, String chatUuid) {
+        List<Message> messages = messageRepository.findMessagesByChat_UuidAndAndSeenAndPersonIsNot(chatUuid, false, person);
 
         messages.forEach(message -> {
             message.setSeen(true);
