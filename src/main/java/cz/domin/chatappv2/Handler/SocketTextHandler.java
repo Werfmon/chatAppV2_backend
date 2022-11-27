@@ -1,30 +1,19 @@
 package cz.domin.chatappv2.Handler;
 
-import com.google.gson.Gson;
-import cz.domin.chatappv2.Controller.dto.create.FCM.FCMNotificationPart;
-import cz.domin.chatappv2.Controller.dto.create.FCM.FCMRequestDTO;
 import cz.domin.chatappv2.Helper.Notifications.SendNotification;
 import cz.domin.chatappv2.Helper.Response.ServiceResponse;
 import cz.domin.chatappv2.Helper.Sockets.ChatSocketSessionInfo;
-import cz.domin.chatappv2.Model.Chat;
-import cz.domin.chatappv2.Model.Person;
 import cz.domin.chatappv2.Service.ChatService;
 import cz.domin.chatappv2.Service.MessageService;
 import cz.domin.chatappv2.Service.PersonService;
 import cz.domin.chatappv2.Service.PersonSubscribeService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -44,7 +33,7 @@ public class SocketTextHandler extends TextWebSocketHandler {
     private final SendNotification sendNotification;
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(WebSocketSession session) {
         log.info("Trying to connect socket");
         final String path = session.getUri().getPath();
         final String uuid = path.substring(path.lastIndexOf("/") + 1);
@@ -77,9 +66,12 @@ public class SocketTextHandler extends TextWebSocketHandler {
         final String chatUuid = uuid.substring(0, 36);
         final String personUuid = uuid.substring(36, 72);
 
-        ServiceResponse<Void> serviceResponse = messageService.saveMessage(chatUuid, personUuid, message.getPayload());
+        Boolean seen = sessions.get(chatUuid).getPersonUuid() != null && sessions.get(chatUuid).getMainPersonUuid() != null;
+
+        ServiceResponse<Void> serviceResponse = messageService.saveMessage(chatUuid, personUuid, message.getPayload(), seen);
         log.info("Socket> service message: " + serviceResponse.getMessage());
-// TODO: implementovat error hlasky
+
+        // TODO: implementovat error hlasky
 
 //        if (sessions.containsKey(chatUuid)) {
 //            if (serviceResponse.getStatus() == ServiceResponse.ERROR) {
@@ -99,22 +91,19 @@ public class SocketTextHandler extends TextWebSocketHandler {
 //                }
 //            }
 
-            log.info(sessions.get(chatUuid).getMainPersonUuid());
-            log.info(sessions.get(chatUuid).getPersonUuid());
-
-            if (Objects.equals(sessions.get(chatUuid).getPersonUuid(), personUuid)) {
-                if (sessions.get(chatUuid).getMainPersonUuid() != null) {
-                    sessions.get(chatUuid).getMainPersonWebSocketSession().sendMessage(new TextMessage(message.getPayload()));
-                } else {
-                    sendNotification.sendNotification(chatUuid, personUuid, message);
-                }
+        if (Objects.equals(sessions.get(chatUuid).getPersonUuid(), personUuid)) {
+            if (sessions.get(chatUuid).getMainPersonUuid() != null) {
+                sessions.get(chatUuid).getMainPersonWebSocketSession().sendMessage(new TextMessage(message.getPayload()));
             } else {
-                if (sessions.get(chatUuid).getPersonUuid() != null) {
-                    sessions.get(chatUuid).getPersonWebSocketSession().sendMessage(new TextMessage(message.getPayload()));
-                } else {
-                    sendNotification.sendNotification(chatUuid, personUuid, message);
-                }
+                sendNotification.sendNotification(chatUuid, personUuid, message);
             }
+        } else {
+            if (sessions.get(chatUuid).getPersonUuid() != null) {
+                sessions.get(chatUuid).getPersonWebSocketSession().sendMessage(new TextMessage(message.getPayload()));
+            } else {
+                sendNotification.sendNotification(chatUuid, personUuid, message);
+            }
+        }
     }
 
     @Override

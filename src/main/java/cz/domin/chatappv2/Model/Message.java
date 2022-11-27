@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -35,4 +34,7 @@ public class Message {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Person person;
+
+    @Column
+    private Boolean seen = false;
 }

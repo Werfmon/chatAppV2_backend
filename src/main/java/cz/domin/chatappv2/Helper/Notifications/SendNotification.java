@@ -1,6 +1,7 @@
 package cz.domin.chatappv2.Helper.Notifications;
 
 import com.google.gson.Gson;
+import cz.domin.chatappv2.Controller.dto.create.FCM.FCMDataPart;
 import cz.domin.chatappv2.Controller.dto.create.FCM.FCMNotificationPart;
 import cz.domin.chatappv2.Controller.dto.create.FCM.FCMRequestDTO;
 import cz.domin.chatappv2.Helper.Response.ServiceResponse;
@@ -19,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @AllArgsConstructor
@@ -49,16 +51,21 @@ public class SendNotification {
 
             if (serviceResponseFCMToken.getStatus() == ServiceResponse.OK) {
                 String title = String.format("%s %s (%s)", person.getFirstName(), person.getLastName(), person.getNickname());
-                String body = "Message: " + message.getPayload();
+                String body = message.getPayload();
                 String FCMToken = serviceResponseFCMToken.getData();
 
                 FCMNotificationPart fcmNotificationPart = new FCMNotificationPart();
                 fcmNotificationPart.setBody(body);
                 fcmNotificationPart.setTitle(title);
 
+                FCMDataPart fcmDataPart = new FCMDataPart();
+                fcmDataPart.setPersonUuid(personUuid);
+                fcmDataPart.setSentDate(LocalDateTime.now().toString());
+
                 FCMRequestDTO fcmRequestDTO = new FCMRequestDTO();
-                fcmRequestDTO.setNotification(fcmNotificationPart);
                 fcmRequestDTO.setTo(FCMToken);
+                fcmRequestDTO.setNotification(fcmNotificationPart);
+                fcmRequestDTO.setData(fcmDataPart);
 
                 String convertedBody = new Gson().toJson(fcmRequestDTO);
                 log.info("Send to google api: " + convertedBody);

@@ -19,4 +19,5 @@ public class ReadMessageDTO {
     private String text;
     private String chatUuid;
     private Person person;
+    private Boolean seen;
 }

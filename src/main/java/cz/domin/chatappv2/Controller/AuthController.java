@@ -34,4 +34,14 @@ public class AuthController {
             return new Response<>(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), serviceResponse.getStatus());
         }
     }
+    @GetMapping("/valid-jwt")
+    public Response<Boolean> testJWT(Authentication authentication) {
+        String email = authentication.getPrincipal().toString();
+        Person person = personService.getPersonByEmail(email);
+
+        if (person == null) {
+            return new Response<>(false, HttpStatus.BAD_REQUEST, "JWT is invalid", false);
+        }
+        return new Response<>(true, HttpStatus.BAD_REQUEST, "JWT is valid", true);
+    }
 }

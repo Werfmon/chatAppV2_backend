@@ -5,12 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class FCMRequestDTO {
-    private String to;
-    private FCMNotificationPart notification;
-    private FCMDataPart data;
+public class FCMDataPart {
+    private String personUuid;
+    private String sentDate;
 }

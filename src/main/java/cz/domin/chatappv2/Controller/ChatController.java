@@ -54,4 +54,18 @@ public class ChatController {
         }
         return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
     }
+    @GetMapping("/{chat_uuid}/message/last")
+    public Response<ReadMessageDTO> getLastChatMessage(@PathVariable(name = "chat_uuid") String chatUuid) {
+        ServiceResponse<ReadMessageDTO> serviceResponse = messageService.findLastChatMessage(chatUuid);
+
+        if (serviceResponse.getStatus() == ServiceResponse.OK) {
+            return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
+        }
+        return new Response<>(HttpStatus.BAD_REQUEST);
+    }
+    @PutMapping("/{chat_uuid}/messages/set-seen/latest")
+    public Response<Void> setSeenLastMessagesAfterPerson(@PathVariable(name = "chat_uuid") String chatUuid) {
+        ServiceResponse<Void> serviceResponse = messageService.setAllLastMessagesToSeen(chatUuid);
+        return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
+    }
 }
