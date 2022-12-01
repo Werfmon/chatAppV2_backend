@@ -1,4 +1,7 @@
 spring:
+  config:
+    activate:
+      on-profile: dev
   datasource:
     url: jdbc:mysql://localhost:3306/chat_app_v2
     username: user
@@ -6,3 +9,21 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:mariadb://172.27.0.2/chatapp?useSSL=false
+    username: root
+    password: tajneheslo2012
+    hikari:
+      minimumIdle: 2
+      maximumPoolSize: 10
+      idleTimeout: 120000
+      connectionTimeout: 300000
+      leakDetectionThreshold: 300000
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
