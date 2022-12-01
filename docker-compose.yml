@@ -1,0 +1,35 @@
+version: "3.8"
+volumes:
+    logs:
+        driver: local
+services: 
+#spring:
+            # container_name: chatapp_spring 
+            #image: chatapp
+            #ports: 
+        #   - "5780:8080"
+        #depends_on:
+        #  - "database"
+        #args: 
+        #   SPRING_DATASOURCE_URL: jdbc:mysql://mysql:5781/chatapp
+        #  SPRING_DATASOURCE_USERNAME: root
+        #  SPRING_DATASOURCE_PASSWORD: tajneheslo2012
+    
+    database:
+        container_name: chatapp_db
+        image: mariadb:10.8.2
+        ports: 
+           - "5781:3306"
+        environment:
+           MYSQL_ROOT_PASSWORD: "tajneheslo2012"
+           MYSQL_USER: "api"
+           MYSQL_PASSWORD: "tajneheslo2103"
+           MYSQL_DATABASE: "chatapp"      
+       
+    adminer:
+        container_name: chatapp_adminer
+        image: adminer:latest
+        restart: always
+        ports:
+           - "5782:8080"
+

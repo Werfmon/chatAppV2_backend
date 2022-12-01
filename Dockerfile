@@ -13,13 +13,11 @@ RUN M2_HOME='/opt/apache-maven-3.6.3' \
 
 RUN chmod a+x opt/apache-maven-3.6.3
 
-# RUN opt/apache-maven-3.6.3/bin/mvn install
-
 RUN mkdir /app
 WORKDIR /app
 COPY . /app
 
-RUN cd /app
-RUN ../opt/apache-maven-3.6.3/bin/mvn install
+# RUN cd /app
+# RUN ../opt/apache-maven-3.6.3/bin/mvn install
 
 
