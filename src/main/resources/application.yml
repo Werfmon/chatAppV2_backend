@@ -15,15 +15,9 @@ spring:
     activate:
       on-profile: prod
   datasource:
-    url: jdbc:mariadb://172.27.0.2/chatapp?useSSL=false
+    url: jdbc:mariadb://185.8.165.101:5781/chatapp?useSSL=false
     username: root
     password: tajneheslo2012
-    hikari:
-      minimumIdle: 2
-      maximumPoolSize: 10
-      idleTimeout: 120000
-      connectionTimeout: 300000
-      leakDetectionThreshold: 300000
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
