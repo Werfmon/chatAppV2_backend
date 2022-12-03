@@ -17,7 +17,10 @@ RUN mkdir /app
 WORKDIR /app
 COPY . /app
 
-# RUN cd /app
-# RUN ../opt/apache-maven-3.6.3/bin/mvn install
+ARG enviroment
+RUN echo $environment
 
+RUN cd /app
+RUN ../opt/apache-maven-3.6.3/bin/mvn install -DskipTests
 
+ENTRYPOINT ["../opt/apache-maven-3.6.3/bin/mvn", "spring-boot:run"]

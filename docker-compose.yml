@@ -3,17 +3,21 @@ volumes:
     logs:
         driver: local
 services: 
-#spring:
-            # container_name: chatapp_spring 
-            #image: chatapp
-            #ports: 
-        #   - "5780:8080"
-        #depends_on:
-        #  - "database"
-        #args: 
-        #   SPRING_DATASOURCE_URL: jdbc:mysql://mysql:5781/chatapp
-        #  SPRING_DATASOURCE_USERNAME: root
-        #  SPRING_DATASOURCE_PASSWORD: tajneheslo2012
+    spring:
+        container_name: chatapp_spring 
+        image: chatapp
+        ports: 
+          - "5780:8080"
+        depends_on:
+          - database
+        build:
+            dockerfile: Dockerfile
+            context: .
+            args: 
+                environment: prod
+                SPRING_DATASOURCE_URL: jdbc:mysql://mysql:5781/chatapp
+                SPRING_DATASOURCE_USERNAME: root
+                SPRING_DATASOURCE_PASSWORD: tajneheslo2012
     
     database:
         container_name: chatapp_db
