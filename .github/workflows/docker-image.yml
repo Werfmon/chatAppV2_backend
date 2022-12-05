@@ -12,4 +12,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker images
-      run: /bin/bash ../../self-deploy.sh
+      run: ssh dominik@mohler.it 'cd ./projects/chatAppV2_backend && /bin/bash ./self-deploy'
