@@ -17,10 +17,10 @@ RUN mkdir /app
 WORKDIR /app
 COPY . /app
 
-ARG enviroment
-RUN echo $environment
+ARG ENVIRONMENT
+ENV ENVIRONMENT=${ENVIRONMENT}
+RUN echo $ENVIRONMENT
 
 RUN cd /app
-RUN ../opt/apache-maven-3.6.3/bin/mvn install -DskipTests
-
-ENTRYPOINT ["../opt/apache-maven-3.6.3/bin/mvn", "spring-boot:run"]
+RUN ../opt/apache-maven-3.6.3/bin/mvn install -DskipTests 
+ENTRYPOINT ../opt/apache-maven-3.6.3/bin/mvn spring-boot:run -Dspring-boot.run.profiles=$ENVIRONMENT
