@@ -36,4 +36,3 @@ services:
         restart: always
         ports:
            - "5782:8080"
-
