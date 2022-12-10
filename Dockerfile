@@ -34,4 +34,4 @@ ENV MYSQL_USER=${MYSQL_USER}
 
 RUN cd /app
 RUN ../opt/apache-maven-3.6.3/bin/mvn install -DskipTests 
-RUN echo "../opt/apache-maven-3.6.3/bin/mvn spring-boot:run -Dspring-boot.run.profiles=$ENVIRONMENT -Ddb_url=jdbc:mariadb://database/$MYSQL_DATABASE -Ddb_username=$MYSQL_USER -Ddb_password=$MYSQL_PASSWORD"
+ENTRYPOINT ../opt/apache-maven-3.6.3/bin/mvn spring-boot:run -Dspring-boot.run.profiles=$ENVIRONMENT -Dspring-boot.run.arguments=---spring.datasource.url=jdbc:mariadb://database/$MYSQL_DATABASE -Dspring-boot.run.arguments=--spring.datasource.username=$MYSQL_USER -Dspring-boot.run.arguments=--spring.datasource.password=$MYSQL_PASSWORD

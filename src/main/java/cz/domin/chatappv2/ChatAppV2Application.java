@@ -7,7 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ChatAppV2Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(ChatAppV2Application.class, args);
+        SpringApplication application = new SpringApplication(ChatAppV2Application.class);
+        application.setAddCommandLineProperties(false);
+        application.run(args);
     }
-
 }
