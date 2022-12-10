@@ -22,10 +22,10 @@ services:
         ports: 
            - "5781:3306"
         environment:
-           MYSQL_ROOT_PASSWORD: "tajneheslo2012"
-           MYSQL_USER: "api"
-           MYSQL_PASSWORD: "tajneheslo2103"
-           MYSQL_DATABASE: "chatapp"      
+           MYSQL_ROOT_PASSWORD: ${ROOT_PASSWORD}
+           MYSQL_USER: "user"
+           MYSQL_PASSWORD: ${PASSWORD}
+           MYSQL_DATABASE: "chatapp"     
        
     adminer:
         container_name: chatapp_adminer
