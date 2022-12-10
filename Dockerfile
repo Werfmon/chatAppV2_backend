@@ -19,7 +19,6 @@ COPY . /app
 
 ARG ENVIRONMENT
 ENV ENVIRONMENT=${ENVIRONMENT}
-RUN echo $ENVIRONMENT
 
 RUN cd /app
 RUN ../opt/apache-maven-3.6.3/bin/mvn install -DskipTests 
