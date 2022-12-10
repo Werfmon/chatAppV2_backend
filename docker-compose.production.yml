@@ -23,7 +23,7 @@ services:
            - "5781:3306"
         environment:
            MYSQL_ROOT_PASSWORD: ${ROOT_PASSWORD}
-           MYSQL_USER: ${user}
+           MYSQL_USER: "user"
            MYSQL_PASSWORD: ${PASSWORD}
            MYSQL_DATABASE: "chatapp"     
        
