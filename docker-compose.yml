@@ -15,6 +15,10 @@ services:
             context: .
             args: 
               ENVIRONMENT: ${ENV}
+              MYSQL_ROOT_PASSWORD: ${ROOT_PASSWORD}
+              MYSQL_USER: "user"
+              MYSQL_PASSWORD: ${PASSWORD}
+              MYSQL_DATABASE: "chatapp"
 
     database:
         container_name: chatapp_db
