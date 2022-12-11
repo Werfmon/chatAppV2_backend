@@ -34,7 +34,7 @@ ARG MYSQL_USER
 ENV MYSQL_USER=${MYSQL_USER}
 RUN export SPRING_DATASOURCE_USERNAME=$MYSQL_USER
 
-RUN export SPRING_DATASOURCE_URL=jdbc:mysql://database/$MYSQL_DATABASE
+RUN export SPRING_DATASOURCE_URL=jdbc:mariadb://database/$MYSQL_DATABASE
 
 RUN cd /app
 RUN ../opt/apache-maven-3.6.3/bin/mvn install -DskipTests 
