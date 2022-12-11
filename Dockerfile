@@ -25,16 +25,17 @@ ENV MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
 ARG MYSQL_PASSWORD
 ENV MYSQL_PASSWORD=${MYSQL_PASSWORD}
-RUN export SPRING_DATASOURCE_PASSWORD=$MYSQL_PASSWORD
 
 ARG MYSQL_DATABASE
 ENV MYSQL_DATABASE=${MYSQL_DATABASE}
 
 ARG MYSQL_USER
 ENV MYSQL_USER=${MYSQL_USER}
-RUN export SPRING_DATASOURCE_USERNAME=$MYSQL_USER
 
-RUN export SPRING_DATASOURCE_URL=jdbc:mariadb://database/$MYSQL_DATABASE
+RUN touch cd /src/main/resorces/secrets.properties
+RUN echo "spring.datasource.url=jdbc:mariadb://database/$MYSQL_DATABASE  \
+          spring.datasource.username=$MYSQL_USER  \
+          spring.datasource.password=MYSQL_PASSWORD" > /src/main/resorces/secrets.properties
 
 RUN cd /app
 RUN ../opt/apache-maven-3.6.3/bin/mvn install -DskipTests 
