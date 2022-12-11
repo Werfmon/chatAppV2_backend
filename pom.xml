@@ -104,7 +104,14 @@
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+		<artifactId>spring-boot-maven-plugin</artifactId>
+		<configuration>
+        		<environmentVariables>
+            			<SPRING_DATASOURCE_URL/>
+            			<SPRING_DATASOURCE_USERNAME/>
+            			<SPRING_DATASOURCE_PASSWORD/>
+        		</environmentVariables>
+   		</configuration>
             </plugin>
         </plugins>
     </build>
