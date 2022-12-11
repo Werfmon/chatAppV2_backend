@@ -15,9 +15,9 @@ spring:
     activate:
       on-profile: prod
   datasource:
-    url: ${spring.datasource.url}
-    username: ${spring.datasource.username}
-    password: ${spring.datasource.password}
+    url: ${SPRING_DATABASE_URL}
+    username: ${SPRING_DATABASE_USERNAME}
+    password: ${SPRING_DATABASE_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
