@@ -42,7 +42,7 @@ public class Person {
     private LocalDateTime lastLogin;
 
     @Column(name = "image_path", nullable = false)
-    private String imagePath = "src/main/resources/static/images/avatars/default.png";
+    private String imagePath = "/src/main/resources/static/images/avatars/default.png";
 
     @ManyToOne
     @JoinColumn(
