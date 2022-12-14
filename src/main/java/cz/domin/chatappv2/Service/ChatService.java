@@ -33,7 +33,7 @@ public class ChatService {
                  limit,
                  offset
          );
-
+        System.out.println(chats.size());
          List<ReadChatDTO> readChatDTOS = chats.stream().map(c -> {
 
              ReadChatDTO readChatDTO = modelMapper.map(c, ReadChatDTO.class);
@@ -60,6 +60,7 @@ public class ChatService {
              base64ImageConvertorResponse = Base64ImageConvertor.load(imagePath);
 
              if (!base64ImageConvertorResponse.isStatus()) {
+                 log.info(base64ImageConvertorResponse.getResponse());
                  return null;
              }
 
