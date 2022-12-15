@@ -12,7 +12,7 @@ public interface ChatRepository extends JpaRepository<Chat, String> {
             "INNER JOIN friendship as f ON c.friendship_uuid = f.uuid " +
             "INNER JOIN person as p ON f.person = p.uuid " +
             "INNER JOIN person as mp ON f.main_person = mp.uuid " +
-            "INNER JOIN message as m ON m.chat_uuid = c.uuid " +
+            "LEFT JOIN message as m ON m.chat_uuid = c.uuid " +
             "WHERE f.status_id = :friendshipStatusId  AND (p.uuid = :uuid OR mp.uuid = :uuid) " +
             "AND (lower(p.nickname) LIKE lower(:searchText) OR lower(p.last_name) LIKE lower(:searchText) OR lower(p.first_name) LIKE lower(:searchText)) " +
             "ORDER BY m.sent_date " +
