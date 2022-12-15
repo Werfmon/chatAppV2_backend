@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Deploy Action
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: SSH Remote Commands
+    - name: Build docker image and start containers
       uses: appleboy/ssh-action@v0.1.6
       with:
         host: ${{ secrets.SSH_HOST }}
