@@ -51,6 +51,7 @@ public class MessageService {
         return new ServiceResponse<>(null, "Message saved", ServiceResponse.OK);
     }
     public ServiceResponse<List<ReadMessageDTO>> getChatMessagesBy(String chatUuid, Integer limit, Integer offset) {
+
         List<Message> messages = messageRepository.findMessagesByChat(chatUuid, limit, offset);
 
         List<ReadMessageDTO> readMessageDTOs = new ArrayList<>(messages.stream().map(m -> modelMapper.map(m, ReadMessageDTO.class)).toList());
