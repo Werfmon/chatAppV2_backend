@@ -54,7 +54,9 @@ public class MessageService {
         List<Message> messages = messageRepository.findMessagesByChat(chatUuid, limit, offset);
 
         List<ReadMessageDTO> readMessageDTOs = new ArrayList<>(messages.stream().map(m -> modelMapper.map(m, ReadMessageDTO.class)).toList());
-        Collections.reverse(readMessageDTOs);
+        if (readMessageDTOs.size() != 0) {
+            Collections.reverse(readMessageDTOs);
+        }
         return new ServiceResponse<>(readMessageDTOs, "Returned Messages", ServiceResponse.OK);
     }
     public ServiceResponse<ReadMessageDTO> findLastChatMessage(String chatUuid) {
