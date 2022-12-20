@@ -7,7 +7,7 @@ import java.util.Base64;
 
 @Slf4j
 public class Base64ImageConvertor {
-    public static Base64ImageConvertorResponse save(String base64Image, String personUuid) {
+    public static final Base64ImageConvertorResponse save(String base64Image, String personUuid) {
         byte[] imageByteFormat;
         File file = null;
         String ext = "";

@@ -127,5 +127,17 @@ public class PersonService {
         }
         return new ServiceResponse<>(readPersonDTO, "Person created", ServiceResponse.OK);
     }
+    public ServiceResponse<Void> updatePersonAvatar(Person person, String base64Image) {
+        Base64ImageConvertorResponse base64ImageConvertorResponse = Base64ImageConvertor.save(base64Image, person.getUuid());
 
+        if (!base64ImageConvertorResponse.isStatus()) {
+            return new ServiceResponse<>(null, base64ImageConvertorResponse.getResponse(), ServiceResponse.ERROR);
+        }
+
+        person.setImagePath(base64ImageConvertorResponse.getResponse());
+
+        personRepository.save(person);
+
+        return new ServiceResponse<>(null, "Avatar was saved", ServiceResponse.OK);
+    }
 }

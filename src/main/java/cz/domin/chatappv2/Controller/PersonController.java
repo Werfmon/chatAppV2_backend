@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -44,5 +45,20 @@ public class PersonController {
         ServiceResponse<List<ReadPersonDTO>> serviceResponse = personService.getAllAvailablePeople(person.getUuid(), searchText);
 
         return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
+    }
+
+    @PutMapping("/avatar")
+    public Response<Void> updatePersonAvatar(Authentication authentication, @RequestBody HashMap<String, String> body) {
+        String email = authentication.getPrincipal().toString();
+        Person person = personService.getPersonByEmail(email);
+
+        String base64Image = body.get("base64Image");
+
+        ServiceResponse<Void> serviceResponse = personService.updatePersonAvatar(person, base64Image);
+
+        if (serviceResponse.getStatus()) {
+            return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
+        }
+        return new Response<>(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
     }
 }
