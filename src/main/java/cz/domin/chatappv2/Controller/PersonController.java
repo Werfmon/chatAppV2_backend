@@ -2,6 +2,8 @@ package cz.domin.chatappv2.Controller;
 
 import com.google.api.client.util.IOUtils;
 import cz.domin.chatappv2.Controller.dto.read.ReadPersonDTO;
+import cz.domin.chatappv2.Controller.dto.update.UpdatePasswordDTO;
+import cz.domin.chatappv2.Helper.ControllerHelpers;
 import cz.domin.chatappv2.Helper.Response.Response;
 import cz.domin.chatappv2.Helper.Response.ServiceResponse;
 import cz.domin.chatappv2.Model.Person;
@@ -20,9 +22,8 @@ import java.util.List;
 @RequestMapping("/person")
 @AllArgsConstructor
 @Slf4j
-public class PersonController {
+public class PersonController extends ControllerHelpers {
     private final PersonService personService;
-
 
     @PostMapping("/registration")
     public Response<Person> create(@RequestBody NewPersonDTO newPersonDTO) {
@@ -39,8 +40,7 @@ public class PersonController {
     }
     @GetMapping("/all-available")
     public Response<List<ReadPersonDTO>> getAllAvailablePeople(Authentication authentication, @RequestParam(name = "search") String searchText) {
-        String email = authentication.getPrincipal().toString();
-        Person person = personService.getPersonByEmail(email);
+        Person person = super.getPersonFromAuthentication(authentication);
 
         ServiceResponse<List<ReadPersonDTO>> serviceResponse = personService.getAllAvailablePeople(person.getUuid(), searchText);
 
@@ -49,8 +49,7 @@ public class PersonController {
 
     @PutMapping("/avatar")
     public Response<Void> updatePersonAvatar(Authentication authentication, @RequestBody HashMap<String, String> body) {
-        String email = authentication.getPrincipal().toString();
-        Person person = personService.getPersonByEmail(email);
+        Person person = super.getPersonFromAuthentication(authentication);
 
         String base64Image = body.get("base64Image");
 
@@ -60,5 +59,18 @@ public class PersonController {
             return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
         }
         return new Response<>(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
+    }
+
+    @PutMapping("/password")
+    public Response<Void> changeOldPassword(Authentication authentication, @RequestBody UpdatePasswordDTO updatePasswordDTO) {
+        Person person = super.getPersonFromAuthentication(authentication);
+
+//        ServiceResponse<Void> serviceResponse = personService.changePasswordPassword(person, updatePasswordDTO.getOldPassword(), updatePasswordDTO.getNewPassword());
+//        if (serviceResponse.getStatus()) {
+//            return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
+//        } else {
+//            return new Response<>(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
+//        }
+        return null;
     }
 }

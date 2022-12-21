@@ -140,4 +140,17 @@ public class PersonService {
 
         return new ServiceResponse<>(null, "Avatar was saved", ServiceResponse.OK);
     }
+    public ServiceResponse<Void> changePasswordPassword(Person person, String oldPassword, String newPassword) {
+        String storedEncodedOldPassword = person.getPassword();
+
+        if (!bCryptPasswordEncoder.matches(oldPassword, storedEncodedOldPassword)) {
+            return new ServiceResponse<>(null, "Passwords don't match", false);
+        }
+
+        person.setPassword(bCryptPasswordEncoder.encode(newPassword));
+
+        personRepository.save(person);
+
+        return new ServiceResponse<>(null, "Password was changed", true);
+    }
 }
