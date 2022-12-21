@@ -4,8 +4,6 @@ import cz.domin.chatappv2.Controller.dto.read.ReadChatDTO;
 import cz.domin.chatappv2.Controller.dto.read.ReadMessageDTO;
 import cz.domin.chatappv2.Helper.Response.Response;
 import cz.domin.chatappv2.Helper.Response.ServiceResponse;
-import cz.domin.chatappv2.Model.Chat;
-import cz.domin.chatappv2.Model.Message;
 import cz.domin.chatappv2.Model.Person;
 import cz.domin.chatappv2.Service.ChatService;
 import cz.domin.chatappv2.Service.MessageService;
@@ -13,10 +11,7 @@ import cz.domin.chatappv2.Service.PersonService;
 import lombok.AllArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
-import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
