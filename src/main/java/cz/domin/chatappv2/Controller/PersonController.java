@@ -31,16 +31,17 @@ public class PersonController extends ControllerHelpers {
         Response<Person> response;
 
         if (serviceResponse.getStatus() == ServiceResponse.OK) {
-            response = new Response(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
+            response = new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
         } else {
-            response = new Response(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
+            response = new Response<>(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
         }
 
         return response;
     }
     @GetMapping("/all-available")
     public Response<List<ReadPersonDTO>> getAllAvailablePeople(Authentication authentication, @RequestParam(name = "search") String searchText) {
-        Person person = super.getPersonFromAuthentication(authentication);
+        String email = authentication.getPrincipal().toString();
+        Person person = personService.getPersonByEmail(email);
 
         ServiceResponse<List<ReadPersonDTO>> serviceResponse = personService.getAllAvailablePeople(person.getUuid(), searchText);
 
@@ -49,7 +50,8 @@ public class PersonController extends ControllerHelpers {
 
     @PutMapping("/avatar")
     public Response<Void> updatePersonAvatar(Authentication authentication, @RequestBody HashMap<String, String> body) {
-        Person person = super.getPersonFromAuthentication(authentication);
+        String email = authentication.getPrincipal().toString();
+        Person person = personService.getPersonByEmail(email);
 
         String base64Image = body.get("base64Image");
 
@@ -63,14 +65,14 @@ public class PersonController extends ControllerHelpers {
 
     @PutMapping("/password")
     public Response<Void> changeOldPassword(Authentication authentication, @RequestBody UpdatePasswordDTO updatePasswordDTO) {
-        Person person = super.getPersonFromAuthentication(authentication);
+        String email = authentication.getPrincipal().toString();
+        Person person = personService.getPersonByEmail(email);
 
-//        ServiceResponse<Void> serviceResponse = personService.changePasswordPassword(person, updatePasswordDTO.getOldPassword(), updatePasswordDTO.getNewPassword());
-//        if (serviceResponse.getStatus()) {
-//            return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
-//        } else {
-//            return new Response<>(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
-//        }
-        return null;
+        ServiceResponse<Void> serviceResponse = personService.changePasswordPassword(person, updatePasswordDTO.getOldPassword(), updatePasswordDTO.getNewPassword());
+        if (serviceResponse.getStatus()) {
+            return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
+        } else {
+            return new Response<>(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
+        }
     }
 }
