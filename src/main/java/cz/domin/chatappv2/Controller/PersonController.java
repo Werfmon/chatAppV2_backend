@@ -68,11 +68,12 @@ public class PersonController extends ControllerHelpers {
         String email = authentication.getPrincipal().toString();
         Person person = personService.getPersonByEmail(email);
 
-        ServiceResponse<Void> serviceResponse = personService.changePasswordPassword(person, updatePasswordDTO.getOldPassword(), updatePasswordDTO.getNewPassword());
-        if (serviceResponse.getStatus()) {
-            return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
-        } else {
-            return new Response<>(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
-        }
+//       ServiceResponse<Void> serviceResponse = personService.changePasswordPassword(person, updatePasswordDTO.getOldPassword(), updatePasswordDTO.getNewPassword());
+//        if (serviceResponse.getStatus()) {
+//            return new Response<>(serviceResponse.getData(), HttpStatus.OK, serviceResponse.getMessage(), true);
+//        } else {
+//            return new Response<>(serviceResponse.getData(), HttpStatus.BAD_REQUEST, serviceResponse.getMessage(), false);
+//        }
+        return null;
     }
 }
