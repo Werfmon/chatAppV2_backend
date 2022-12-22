@@ -4,6 +4,7 @@ import cz.domin.chatappv2.Controller.dto.create.NewPersonDTO;
 import cz.domin.chatappv2.Controller.dto.read.ReadPersonDTO;
 import cz.domin.chatappv2.Helper.Convertor.Base64ImageConvertor;
 import cz.domin.chatappv2.Helper.Convertor.Base64ImageConvertorResponse;
+import cz.domin.chatappv2.Helper.Response.Response;
 import cz.domin.chatappv2.Helper.Response.ServiceResponse;
 import cz.domin.chatappv2.Model.Friendship;
 import cz.domin.chatappv2.Model.FriendshipStatus;
@@ -14,6 +15,7 @@ import cz.domin.chatappv2.Repository.PersonRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -140,7 +142,7 @@ public class PersonService {
 
         return new ServiceResponse<>(null, "Avatar was saved", ServiceResponse.OK);
     }
-    public ServiceResponse<Void> changePasswordPassword(Person person, String oldPassword, String newPassword) {
+    public ServiceResponse<String> changePasswordPassword(Person person, String oldPassword, String newPassword) {
         String storedEncodedOldPassword = person.getPassword();
 
         if (!bCryptPasswordEncoder.matches(oldPassword, storedEncodedOldPassword)) {
