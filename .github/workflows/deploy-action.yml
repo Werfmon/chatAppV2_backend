@@ -18,4 +18,4 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD }}
         script: |
           cd projects/chatAppV2_backend/
-          bash self-deploy.sh
+          bash self-deploy.sh ${{ secrets.DB_PASSWORD }}

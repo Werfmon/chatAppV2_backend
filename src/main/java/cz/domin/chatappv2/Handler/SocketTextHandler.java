@@ -3,10 +3,7 @@ package cz.domin.chatappv2.Handler;
 import cz.domin.chatappv2.Helper.Notifications.SendNotification;
 import cz.domin.chatappv2.Helper.Response.ServiceResponse;
 import cz.domin.chatappv2.Helper.Sockets.ChatSocketSessionInfo;
-import cz.domin.chatappv2.Service.ChatService;
 import cz.domin.chatappv2.Service.MessageService;
-import cz.domin.chatappv2.Service.PersonService;
-import cz.domin.chatappv2.Service.PersonSubscribeService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -27,9 +24,6 @@ public class SocketTextHandler extends TextWebSocketHandler {
     Map<String, ChatSocketSessionInfo> sessions = new HashMap<>();
 
     private final MessageService messageService;
-    private final PersonService personService;
-    private final ChatService chatService;
-    private final PersonSubscribeService personSubscribeService;
     private final SendNotification sendNotification;
 
     @Override
@@ -70,26 +64,6 @@ public class SocketTextHandler extends TextWebSocketHandler {
 
         ServiceResponse<Void> serviceResponse = messageService.saveMessage(chatUuid, personUuid, message.getPayload(), seen);
         log.info("Socket> service message: " + serviceResponse.getMessage());
-
-        // TODO: implementovat error hlasky
-
-//        if (sessions.containsKey(chatUuid)) {
-//            if (serviceResponse.getStatus() == ServiceResponse.ERROR) {
-//                if (Objects.equals(sessions.get(chatUuid).getMainPersonUuid(), personUuid)) {
-//                    sessions.get(chatUuid)
-//                            .getPersonWebSocketSession()
-//                            .sendMessage(
-//                                    new TextMessage(serviceResponse.getMessage())
-//                            );
-//                }
-//                if (Objects.equals(sessions.get(chatUuid).getPersonUuid(), personUuid)) {
-//                    sessions.get(chatUuid)
-//                            .getMainPersonWebSocketSession()
-//                            .sendMessage(
-//                                    new TextMessage(serviceResponse.getMessage())
-//                            );
-//                }
-//            }
 
         if (Objects.equals(sessions.get(chatUuid).getPersonUuid(), personUuid)) {
             if (sessions.get(chatUuid).getMainPersonUuid() != null) {
