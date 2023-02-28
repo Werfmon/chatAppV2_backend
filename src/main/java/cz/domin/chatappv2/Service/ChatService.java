@@ -33,9 +33,7 @@ public class ChatService {
                  limit,
                  offset
          );
-        System.out.println(chats.size());
          List<ReadChatDTO> readChatDTOS = chats.stream().map(c -> {
-
              ReadChatDTO readChatDTO = modelMapper.map(c, ReadChatDTO.class);
              ReadFriendshipDTO readFriendshipDTO = modelMapper.map(c.getFriendship(), ReadFriendshipDTO.class);
              ReadPersonDTO personDTO = modelMapper.map(c.getFriendship().getPerson(), ReadPersonDTO.class);
