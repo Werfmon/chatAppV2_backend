@@ -33,9 +33,11 @@ ARG MYSQL_USER
 ENV MYSQL_USER=${MYSQL_USER}
 
 RUN touch ./src/main/resources/secrets.properties
-RUN printf "spring.datasource.url=jdbc:mariadb://database/$MYSQL_DATABASE\nspring.datasource.username=$MYSQL_USER\nspring.datasource.password=$MYSQL_PASSWORD" > ./src/main/resources/secrets.properties
+RUN printf "spring.datasource.url=jdbc:mariadb://database/$MYSQL_DATABASE\nspring.datasource.username=$MYSQL_USER\nspring.datasource.password=$MYSQL_PASSWORD" > ./src/main/resources/secrets.properties 
 
-RUN ../opt/apache-maven-3.6.3/bin/mvn install -DskipTests 
-RUN cat ./src/main/resources/secrets.properties
+RUN cat ./src/main/resources/application-$ENVIRONMENT.yml > ./src/main/resources/application.yml
 
-ENTRYPOINT ../opt/apache-maven-3.6.3/bin/mvn spring-boot:run -Dspring-boot.run.profiles=$ENVIRONMENT 
+RUN ../opt/apache-maven-3.6.3/bin/mvn install -DskipTests
+
+ENTRYPOINT ../opt/apache-maven-3.6.3/bin/mvn spring-boot:run
+ 
